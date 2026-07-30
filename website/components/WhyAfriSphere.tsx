@@ -2,38 +2,32 @@ const features = [
   {
     icon: "🧠",
     title: "AI Built for Africa",
-    text: "Zuri understands African destinations, cultures, languages, and local travel patterns to provide recommendations that generic AI simply can't.",
-    accent: "text-forest",
+    text: "Zuri understands African destinations, cultures, languages, and local travel patterns to provide more relevant recommendations.",
   },
   {
     icon: "🗺️",
     title: "Personalized Itineraries",
-    text: "Every journey is tailored to your budget, travel style, interests, and available time—from weekend escapes to cross-country adventures.",
-    accent: "text-deepblue",
+    text: "Every journey is tailored to your budget, travel style, interests, and available time — from weekend escapes to cross-country adventures.",
   },
   {
     icon: "🏘️",
     title: "Authentic Local Experiences",
-    text: "Discover hidden gems, community experiences, and unforgettable places recommended by locals instead of generic tourist lists.",
-    accent: "text-orange-600",
+    text: "Discover hidden gems, community experiences, and unforgettable places beyond generic tourist lists.",
   },
   {
     icon: "🗣️",
     title: "Multilingual Travel Companion",
     text: "Zuri is designed to communicate naturally across African languages and cultures, creating a more inclusive travel experience.",
-    accent: "text-yellow-600",
   },
   {
     icon: "🛡️",
     title: "Smart Safety Guidance",
-    text: "Receive practical, location-aware travel advice, safety tips, transport guidance, and local recommendations throughout your journey.",
-    accent: "text-emerald-700",
+    text: "Receive practical travel advice, transport guidance, safety information, and relevant local recommendations.",
   },
   {
     icon: "🎭",
     title: "Culture Beyond Tourism",
-    text: "Experience Africa through its people, cuisine, music, traditions, festivals, history, and authentic cultural stories.",
-    accent: "text-blue-700",
+    text: "Experience Africa through its people, cuisine, music, traditions, festivals, history, and cultural stories.",
   },
 ];
 
@@ -41,67 +35,45 @@ export default function WhyAfriSphere() {
   return (
     <section
       id="why"
-      className="bg-stone-100 px-6 py-24"
+      className="scroll-mt-24 bg-gray-50 px-6 py-24"
     >
-      <div className="mx-auto max-w-7xl">
-
-        {/* Section Badge */}
-
-        <div className="flex justify-center">
-          <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-semibold text-forest">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-forest">
             Why AfriSphere AI
           </span>
+
+          <h2 className="mx-auto mt-7 max-w-3xl font-serif text-4xl leading-tight text-forest md:text-5xl">
+            Built specifically for African travel.
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+            AfriSphere AI combines trusted local knowledge with the power of
+            artificial intelligence to help travelers discover Africa with
+            confidence, authenticity, and personalized recommendations.
+          </p>
         </div>
 
-        {/* Heading */}
-
-        <h2 className="mx-auto mt-8 max-w-4xl text-center font-serif text-4xl leading-tight text-forest md:text-5xl">
-          Built specifically for African travel.
-        </h2>
-
-        {/* Intro */}
-
-        <p className="mx-auto mt-6 max-w-3xl text-center text-lg leading-8 text-gray-600">
-          AfriSphere AI combines trusted local knowledge with the power of
-          artificial intelligence to help travelers discover Africa with
-          confidence, authenticity, and personalized recommendations.
-        </p>
-
-        {/* Feature Cards */}
-
-        <div className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
-
             <div
               key={feature.title}
-              className="group rounded-3xl border border-black/5 bg-warmwhite p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              className="group rounded-3xl border border-black/5 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
-
-              {/* Icon */}
-
-              <div className="mb-6 text-5xl transition-transform duration-300 group-hover:scale-110">
+              <div className="text-4xl">
                 {feature.icon}
               </div>
 
-              {/* Title */}
-
-              <h3 className={`font-serif text-2xl ${feature.accent}`}>
+              <h3 className="mt-5 font-serif text-xl text-forest transition group-hover:text-sunrise">
                 {feature.title}
               </h3>
 
-              {/* Text */}
-
-              <p className="mt-4 leading-7 text-gray-600">
+              <p className="mt-3 leading-7 text-gray-600">
                 {feature.text}
               </p>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
     </section>
   );

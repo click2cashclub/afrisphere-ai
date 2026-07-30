@@ -1,125 +1,113 @@
+import Link from "next/link";
+
 const highlights = [
   {
     name: "Victoria Falls",
     emoji: "🌊",
-    description:
-      "One of the Seven Natural Wonders of the World, famous for breathtaking waterfalls and adventure experiences.",
+    text: "One of the world's great natural wonders, famous for breathtaking waterfalls and adventure experiences.",
   },
   {
     name: "Hwange National Park",
     emoji: "🦁",
-    description:
-      "Zimbabwe's largest wildlife reserve with elephants, lions, and unforgettable safari adventures.",
+    text: "Zimbabwe's largest national park, known for elephants, predators, and unforgettable safari experiences.",
   },
   {
     name: "Great Zimbabwe",
     emoji: "🏛️",
-    description:
-      "The ancient stone city that inspired the nation's name and showcases Africa's remarkable history.",
+    text: "The ancient stone city that inspired the nation's name and showcases an extraordinary chapter of African history.",
   },
   {
     name: "Matobo Hills",
     emoji: "🪨",
-    description:
-      "UNESCO World Heritage Site known for balancing rocks, ancient cave art, and rhino tracking.",
+    text: "A UNESCO World Heritage landscape known for balancing rocks, ancient rock art, and wildlife experiences.",
   },
   {
     name: "Bulawayo",
     emoji: "🏙️",
-    description:
-      "Zimbabwe's cultural capital, home to museums, heritage sites, local cuisine, and vibrant arts.",
+    text: "Zimbabwe's cultural hub, with museums, heritage sites, local cuisine, arts, and access to Matobo.",
   },
   {
     name: "Eastern Highlands",
     emoji: "🌿",
-    description:
-      "A paradise of mountains, waterfalls, forests, and scenic hiking trails.",
+    text: "Mountains, forests, waterfalls, scenic drives, hiking trails, and some of Zimbabwe's most beautiful landscapes.",
   },
 ];
 
 export default function LaunchingZimbabwe() {
   return (
-    <section className="bg-forest px-6 py-24 text-white">
-      <div className="mx-auto max-w-7xl">
-
-        {/* Header */}
-
-        <div className="mx-auto max-w-3xl text-center">
-
-          <span className="rounded-full border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-sm font-medium text-orange-300">
+    <section
+      id="zimbabwe"
+      className="scroll-mt-24 bg-forest px-6 py-24 text-white"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <span className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold">
             🇿🇼 Launching in Zimbabwe
           </span>
 
-          <h2 className="mt-8 font-serif text-4xl leading-tight md:text-5xl">
+          <h2 className="mx-auto mt-7 max-w-4xl font-serif text-4xl leading-tight md:text-5xl">
             Our Journey Begins in Zimbabwe
           </h2>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-green-100">
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/75">
             AfriSphere AI launches in Zimbabwe to prove how artificial
             intelligence can transform African tourism. By combining trusted
-            local knowledge with modern AI, Zuri delivers authentic,
-            personalized travel experiences before expanding across Africa.
+            local knowledge with modern AI, Zuri delivers personalized travel
+            experiences before expanding across Africa.
           </p>
-
         </div>
 
-        {/* Destination Cards */}
-
-        <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
-          {highlights.map((place) => (
-
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {highlights.map((highlight) => (
             <div
-              key={place.name}
-              className="rounded-3xl border border-white/10 bg-white/10 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-orange-400 hover:bg-white/15"
+              key={highlight.name}
+              className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition hover:-translate-y-1 hover:bg-white/10"
             >
-
-              <div className="text-5xl">
-                {place.emoji}
+              <div className="text-4xl">
+                {highlight.emoji}
               </div>
 
-              <h3 className="mt-6 font-serif text-2xl">
-                {place.name}
+              <h3 className="mt-5 font-serif text-xl">
+                {highlight.name}
               </h3>
 
-              <p className="mt-4 leading-7 text-green-100">
-                {place.description}
+              <p className="mt-3 leading-7 text-white/70">
+                {highlight.text}
               </p>
-
             </div>
-
           ))}
-
         </div>
 
-        {/* Vision */}
-
-        <div className="mt-20 rounded-3xl border border-white/10 bg-white/5 p-10 text-center backdrop-blur-md">
-
-          <h3 className="font-serif text-3xl">
+        <div className="mt-16 rounded-3xl border border-white/10 bg-white/5 p-8 text-center md:p-12">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-heritage">
             Zimbabwe Today. Africa Tomorrow.
-          </h3>
-
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-green-100">
-            Our vision is to build Africa's most trusted AI-powered tourism
-            platform. We begin by creating an exceptional experience in
-            Zimbabwe before expanding country by country across the continent.
           </p>
 
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+          <h3 className="mx-auto mt-4 max-w-3xl font-serif text-3xl md:text-4xl">
+            Building toward Africa&apos;s trusted AI tourism platform.
+          </h3>
 
-            <button className="rounded-full bg-orange-500 px-8 py-4 font-semibold text-white transition hover:bg-orange-600">
+          <p className="mx-auto mt-5 max-w-2xl leading-7 text-white/70">
+            We begin by creating an exceptional experience in Zimbabwe before
+            expanding country by country across the continent.
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+            <Link
+              href="/destinations"
+              className="rounded-full bg-sunrise px-7 py-3.5 font-semibold text-white transition hover:bg-orange-600"
+            >
               Explore Zimbabwe →
-            </button>
+            </Link>
 
-            <button className="rounded-full border border-white/20 px-8 py-4 font-semibold transition hover:bg-white/10">
+            <Link
+              href="/#roadmap"
+              className="rounded-full border border-white/20 px-7 py-3.5 font-semibold text-white transition hover:bg-white/10"
+            >
               View Product Roadmap
-            </button>
-
+            </Link>
           </div>
-
         </div>
-
       </div>
     </section>
   );
