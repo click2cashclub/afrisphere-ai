@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-forest: #14532D;
+  --color-sunrise: #EA580C;
+  --color-heritage: #CA8A04;
+  --color-deepblue: #1E3A8A;
+  --color-warmwhite: #FAFAF9;
+
+  --font-serif: var(--font-dm-serif);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background-color: var(--color-warmwhite);
+}@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
