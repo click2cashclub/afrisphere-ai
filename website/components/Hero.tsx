@@ -80,7 +80,7 @@ export default function Hero() {
         </Link>
 
         <Link
-          href="/#destinations"
+          href="/#zimbabwe"
           className="inline-flex min-h-[52px] items-center justify-center rounded-full border border-white/30 bg-white/5 px-7 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition hover:-translate-y-1 hover:bg-white/10 sm:min-w-[180px] sm:px-8 sm:py-4 sm:text-lg"
         >
           Explore Africa
