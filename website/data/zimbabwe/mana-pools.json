@@ -1,0 +1,66 @@
+{
+  "id": "mana-pools",
+  "name": "Mana Pools",
+  "country": "Zimbabwe",
+  "region": "Mashonaland West",
+  "type": "National Park",
+
+  "heroImage": "/images/destinations/zimbabwe/mana-pools/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/mana-pools/hero.jpg"
+  ],
+
+  "summary": "A remote UNESCO-listed wilderness on the Zambezi River, famous for walking safaris, canoeing, elephants, and exceptional wildlife encounters.",
+
+  "description": "Mana Pools National Park is one of Zimbabwe's most remarkable wilderness areas. Located along the Zambezi River, its seasonal floodplains, forests, pools, and remote setting create outstanding opportunities for walking safaris, canoeing, game drives, birdwatching, and close encounters with wildlife.",
+
+  "bestTime": {
+    "from": "June",
+    "to": "October"
+  },
+
+  "recommendedStay": "3–5 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -15.750,
+    "longitude": 29.400
+  },
+
+  "highlights": [
+    "Walking Safaris",
+    "Canoe Safaris",
+    "Zambezi River",
+    "Mana Pools",
+    "Wildlife Photography"
+  ],
+
+  "wildlife": [
+    "Elephants",
+    "Lions",
+    "Hippos",
+    "Crocodiles",
+    "Buffalo",
+    "Wild Dogs",
+    "Zebras",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Fresh Fish",
+    "Mopane Worms"
+  ],
+
+  "travelTips": [
+    "Mana Pools is a remote wilderness destination, so plan your trip carefully.",
+    "Book accommodation and safari activities well in advance.",
+    "Walking and canoe safaris should be undertaken with qualified guides.",
+    "Carry binoculars and a camera for wildlife and birdwatching.",
+    "Pack lightweight clothing, comfortable footwear, sunscreen, and insect repellent."
+  ]
+}

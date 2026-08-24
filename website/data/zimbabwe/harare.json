@@ -1,0 +1,65 @@
+{
+  "id": "harare",
+  "name": "Harare",
+  "country": "Zimbabwe",
+  "region": "Harare Metropolitan Province",
+  "type": "City & Cultural Destination",
+
+  "heroImage": "/images/destinations/zimbabwe/harare/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/harare/hero.jpg"
+  ],
+
+  "summary": "Zimbabwe's capital city, offering a mix of modern African culture, museums, galleries, gardens, restaurants, markets, and nearby nature experiences.",
+
+  "description": "Harare is Zimbabwe's vibrant capital and a major starting point for exploring the country. The city combines contemporary African culture with historic landmarks, green spaces, art galleries, restaurants, shopping areas, and easy access to nearby attractions such as Mukuvisi Woodlands and Domboshawa.",
+
+  "bestTime": {
+    "from": "April",
+    "to": "September"
+  },
+
+  "recommendedStay": "2–3 Days",
+
+  "rating": 4,
+
+  "coordinates": {
+    "latitude": -17.825,
+    "longitude": 31.033
+  },
+
+  "highlights": [
+    "Harare Gardens",
+    "National Gallery of Zimbabwe",
+    "Mukuvisi Woodlands",
+    "Mbare Musika",
+    "Domboshawa",
+    "Local Arts & Culture"
+  ],
+
+  "wildlife": [
+    "Giraffes",
+    "Zebras",
+    "Impala",
+    "Warthogs",
+    "Eland",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Mopane Worms",
+    "Traditional Chicken"
+  ],
+
+  "travelTips": [
+    "Explore the city with a trusted local guide when visiting unfamiliar areas.",
+    "Visit museums and galleries to experience Zimbabwean history and contemporary culture.",
+    "Allow extra time for traffic when travelling across the city.",
+    "Try traditional Zimbabwean food alongside modern restaurants and cafes.",
+    "Carry small USD notes for local purchases and transport."
+  ]
+}

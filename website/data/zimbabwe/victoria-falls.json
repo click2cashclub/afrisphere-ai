@@ -1,0 +1,60 @@
+{
+  "id": "victoria-falls",
+  "name": "Victoria Falls",
+  "country": "Zimbabwe",
+  "region": "Matabeleland North",
+  "type": "Natural Wonder",
+
+  "heroImage": "/images/destinations/zimbabwe/victoria-falls/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/victoria-falls/hero.jpg"
+  ],
+
+  "summary": "One of the world's largest waterfalls and Africa's most iconic natural attractions.",
+
+  "description": "Known locally as Mosi-oa-Tunya (The Smoke That Thunders), Victoria Falls offers breathtaking scenery, rainforest walks, river cruises, wildlife, and adventure activities.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "September"
+  },
+
+  "recommendedStay": "2–3 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -17.924,
+    "longitude": 25.857
+  },
+
+  "highlights": [
+    "Victoria Falls Rainforest",
+    "Sunset Cruises",
+    "Helicopter Flights",
+    "Devil's Pool",
+    "White Water Rafting"
+  ],
+
+  "wildlife": [
+    "Elephants",
+    "Hippos",
+    "Crocodiles",
+    "Baboons",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Bream",
+    "Nyama",
+    "Mopane Worms"
+  ],
+
+  "travelTips": [
+    "Carry a waterproof jacket during high-water season.",
+    "Book activities in advance during peak season.",
+    "Bring small USD notes for park fees and local purchases."
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "lake-kariba",
+  "name": "Lake Kariba",
+  "country": "Zimbabwe",
+  "region": "Mashonaland West",
+  "type": "Lake & Wildlife Destination",
+
+  "heroImage": "/images/destinations/zimbabwe/lake-kariba/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/lake-kariba/hero.jpg"
+  ],
+
+  "summary": "A vast inland lake on the Zambezi River offering spectacular sunsets, wildlife, houseboat cruises, fishing, and peaceful lakeside escapes.",
+
+  "description": "Lake Kariba is one of Africa's great inland water destinations. Its enormous waters, dramatic sunsets, islands, and surrounding wildlife create an ideal setting for houseboat holidays, fishing trips, boat cruises, and relaxed escapes along the Zambezi Valley.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "October"
+  },
+
+  "recommendedStay": "2–4 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -16.516,
+    "longitude": 28.800
+  },
+
+  "highlights": [
+    "Sunset Boat Cruises",
+    "Houseboat Safaris",
+    "Tiger Fishing",
+    "Lake Views",
+    "Wildlife Viewing"
+  ],
+
+  "wildlife": [
+    "Elephants",
+    "Hippos",
+    "Crocodiles",
+    "Buffalo",
+    "Waterbuck",
+    "Zebra",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Bream",
+    "Tiger Fish",
+    "Sadza",
+    "Nyama",
+    "Muriwo"
+  ],
+
+  "travelTips": [
+    "Book houseboats and cruises well in advance during popular travel periods.",
+    "Bring sun protection, sunglasses, and a hat for time spent on the water.",
+    "Early morning and sunset cruises offer excellent scenery and wildlife viewing opportunities.",
+    "Carry light clothing for warm days and warmer layers for evenings.",
+    "Confirm fishing regulations and obtain any required permits before fishing."
+  ]
+}

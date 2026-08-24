@@ -1,0 +1,66 @@
+{
+  "id": "hwange-national-park",
+  "name": "Hwange National Park",
+  "country": "Zimbabwe",
+  "region": "Matabeleland North",
+  "type": "National Park",
+
+  "heroImage": "/images/destinations/zimbabwe/hwange-national-park/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/hwange-national-park/hero.jpg"
+  ],
+
+  "summary": "Zimbabwe's largest national park and one of Africa's great wildlife destinations, renowned for its elephants and diverse safari experiences.",
+
+  "description": "Hwange National Park offers expansive savannas, woodland, seasonal pans, and exceptional wildlife viewing. The park is particularly famous for its large elephant population and is home to lions, buffalo, giraffes, wild dogs, zebras, and many other species.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "October"
+  },
+
+  "recommendedStay": "2–4 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -18.629,
+    "longitude": 26.500
+  },
+
+  "highlights": [
+    "Elephant Viewing",
+    "Open-Vehicle Game Drives",
+    "Wildlife Waterholes",
+    "Guided Walking Safaris",
+    "African Wild Dog Sightings"
+  ],
+
+  "wildlife": [
+    "Elephants",
+    "Lions",
+    "African Wild Dogs",
+    "Buffalo",
+    "Giraffes",
+    "Zebras",
+    "Leopards",
+    "Wildebeest"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Bream",
+    "Mopane Worms"
+  ],
+
+  "travelTips": [
+    "Early morning and late afternoon are excellent times for game viewing.",
+    "Carry binoculars for wildlife and birdwatching.",
+    "Pack neutral-coloured clothing and comfortable walking shoes.",
+    "Book safari accommodation and activities in advance during peak season.",
+    "Carry small USD notes for tips and local purchases."
+  ]
+}

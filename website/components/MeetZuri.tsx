@@ -5,18 +5,17 @@ import { useState } from "react";
 
 type DemoKey = "best-time" | "food" | "safety";
 
-const demos: Record<
-  DemoKey,
-  {
-    question: string;
-    answer: string;
-    cards: {
-      icon: string;
-      title: string;
-      text: string;
-    }[];
-  }
-> = {
+type Demo = {
+  question: string;
+  answer: string;
+  cards: {
+    icon: string;
+    title: string;
+    text: string;
+  }[];
+};
+
+const demos: Record<DemoKey, Demo> = {
   "best-time": {
     question: "When's the best time to visit Victoria Falls?",
     answer:
@@ -81,36 +80,40 @@ export default function MeetZuri() {
   return (
     <section
       id="zuri"
-      className="scroll-mt-24 bg-slate-950 px-6 py-24 text-white"
+      className="scroll-mt-24 bg-slate-950 px-4 py-20 text-white sm:px-6 sm:py-24"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Section heading */}
+
+        {/* Section Heading */}
         <div className="text-center">
-          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-heritage">
-            🤖 Meet Zuri
+
+          <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-heritage sm:text-sm">
+            🌍 Meet Zuri
           </span>
 
-          <h2 className="mx-auto mt-6 max-w-4xl font-serif text-4xl leading-tight md:text-5xl">
-            Your Local African Friend
+          <h2 className="mx-auto mt-6 max-w-4xl font-serif text-3xl leading-tight sm:text-4xl md:text-5xl">
+            Your African Travel
             <br />
             <span className="text-heritage">
-              Powered by AI
+              Intelligence Companion
             </span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-white/65">
-            From planning unforgettable safaris to discovering authentic local
-            cuisine, Zuri helps you explore Africa with trusted local knowledge,
-            personalized recommendations, and intelligent travel planning.
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/65 sm:text-lg sm:leading-8">
+            Plan unforgettable journeys, discover authentic local experiences,
+            and explore Africa with personalized itineraries, trusted
+            recommendations, and travel intelligence built for the continent.
           </p>
+
         </div>
 
-        {/* Demo controls */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        {/* Demo Controls */}
+        <div className="mt-8 flex flex-wrap justify-center gap-2 sm:mt-10 sm:gap-3">
+
           <button
             type="button"
             onClick={() => setActiveDemo("best-time")}
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            className={`rounded-full px-4 py-2.5 text-xs font-semibold transition sm:px-5 sm:text-sm ${
               activeDemo === "best-time"
                 ? "bg-heritage text-slate-950"
                 : "border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
@@ -122,7 +125,7 @@ export default function MeetZuri() {
           <button
             type="button"
             onClick={() => setActiveDemo("food")}
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            className={`rounded-full px-4 py-2.5 text-xs font-semibold transition sm:px-5 sm:text-sm ${
               activeDemo === "food"
                 ? "bg-heritage text-slate-950"
                 : "border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
@@ -134,7 +137,7 @@ export default function MeetZuri() {
           <button
             type="button"
             onClick={() => setActiveDemo("safety")}
-            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+            className={`rounded-full px-4 py-2.5 text-xs font-semibold transition sm:px-5 sm:text-sm ${
               activeDemo === "safety"
                 ? "bg-heritage text-slate-950"
                 : "border border-white/10 bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
@@ -142,52 +145,63 @@ export default function MeetZuri() {
           >
             Safety
           </button>
+
         </div>
 
-        {/* Zuri demo */}
-        <div className="mx-auto mt-10 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl">
-          {/* Chat header */}
-          <div className="flex items-center gap-3 border-b border-white/10 px-6 py-5">
-            <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-forest via-heritage to-sunrise font-bold text-white">
-              Z
+        {/* Zuri Demo */}
+        <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl sm:mt-10">
 
-              <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-slate-950 bg-green-400" />
+          {/* Chat Header */}
+          <div className="flex items-center gap-3 border-b border-white/10 px-5 py-4 sm:px-6 sm:py-5">
+
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-forest via-heritage to-sunrise text-lg shadow-lg sm:h-11 sm:w-11 sm:text-xl">
+              🌍
+
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-slate-950 bg-green-400 sm:h-3.5 sm:w-3.5" />
             </div>
 
             <div>
-              <p className="font-semibold">
-                Zuri AI
+              <p className="font-semibold text-white">
+                Zuri
               </p>
 
-              <p className="text-xs text-green-400">
-                ● Online
+              <p className="text-xs font-medium text-heritage">
+                ● Ready
               </p>
             </div>
+
           </div>
 
           {/* Conversation */}
-          <div className="space-y-5 p-6 md:p-8">
-            {/* User question */}
+          <div className="space-y-5 p-4 sm:p-6 md:p-8">
+
+            {/* User Question */}
             <div className="flex justify-end">
-              <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-heritage px-5 py-4 text-sm leading-6 text-slate-950 md:text-base">
+
+              <div className="max-w-[92%] rounded-2xl rounded-tr-sm bg-heritage px-4 py-3 text-sm leading-6 text-slate-950 sm:max-w-[85%] sm:px-5 sm:py-4 sm:text-base">
                 {demo.question}
               </div>
+
             </div>
 
-            {/* Zuri answer */}
+            {/* Zuri Answer */}
             <div className="flex justify-start">
-              <div className="max-w-[90%] rounded-2xl rounded-tl-sm border border-white/10 bg-white/[0.06] px-5 py-4 text-sm leading-7 text-white/85 md:text-base">
+
+              <div className="max-w-[95%] rounded-2xl rounded-tl-sm border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-7 text-white/85 sm:max-w-[90%] sm:px-5 sm:py-4 sm:text-base">
                 {demo.answer}
               </div>
+
             </div>
 
-            {/* Recommendation cards */}
-            <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
+            {/* Recommendation Cards */}
+            <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-2 sm:pt-2">
+
               {demo.cards.map((card) => (
                 <div
                   key={card.title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:bg-white/[0.07]"
                 >
+
                   <div className="text-2xl">
                     {card.icon}
                   </div>
@@ -199,30 +213,36 @@ export default function MeetZuri() {
                   <p className="mt-1 text-xs leading-5 text-white/50">
                     {card.text}
                   </p>
+
                 </div>
               ))}
+
             </div>
 
-            <div className="pt-2 text-center text-xs text-white/35">
+            <div className="pt-1 text-center text-[11px] text-white/35 sm:pt-2 sm:text-xs">
               Powered by African Tourism Intelligence
             </div>
+
           </div>
         </div>
 
-        {/* REAL CHAT CTA */}
-        <div className="mt-10 flex justify-center">
+        {/* Real Chat CTA */}
+        <div className="mt-8 flex justify-center sm:mt-10">
+
           <Link
             href="/chat"
-            className="inline-flex cursor-pointer items-center justify-center rounded-full bg-sunrise px-8 py-4 text-base font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl"
+            className="inline-flex min-h-[52px] w-full max-w-sm items-center justify-center rounded-full bg-sunrise px-7 py-3.5 text-base font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl sm:w-auto sm:px-8 sm:py-4"
           >
             Start Planning With Zuri →
           </Link>
+
         </div>
 
-        <p className="mx-auto mt-4 max-w-xl text-center text-sm text-white/40">
+        <p className="mx-auto mt-4 max-w-xl px-4 text-center text-xs leading-6 text-white/40 sm:text-sm">
           Ask Zuri about destinations, itineraries, culture, food, wildlife,
           and travel across Zimbabwe.
         </p>
+
       </div>
     </section>
   );

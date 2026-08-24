@@ -8,7 +8,7 @@ export default function ContactPage() {
       <section className="mx-auto max-w-xl px-6 pt-32 pb-24 text-center">
         <h1 className="text-4xl font-bold">Get in Touch</h1>
         <p className="mt-4 text-gray-400">
-          Questions, partnerships, or feedback — we'd love to hear from you.
+          Questions, partnerships, or feedback — we&apos;d love to hear from you.
         </p>
       </section>
       <Footer />

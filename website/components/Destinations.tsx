@@ -15,7 +15,7 @@ export default function Destinations() {
           Explore Africa
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-center text-lg text-gray-400">
-          Starting in Zimbabwe, expanding across the continent.
+          Launching with Zimbabwe. Expanding across Africa.
         </p>
         <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-3">
           {destinations.map((d) => (

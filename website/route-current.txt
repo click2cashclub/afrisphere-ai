@@ -1,0 +1,2017 @@
+import { GoogleGenAI } from "@google/genai";
+import { NextRequest, NextResponse } from "next/server";
+import { extractTravelData } from "./extractTravelData";
+import { getDestinationRecommendations } from "@/lib/destinationRecommendations";
+const apiKey = process.env.GEMINI_API_KEY;
+
+type HistoryMessage = {
+  role: "user" | "zuri";
+  text: string;
+};
+
+type TripSummary = {
+  country?: string;
+  duration?: number;
+  travelStyle?: string;
+  transport?: string;
+  budget?: string;
+  accommodation?: string;
+  activities?: string;
+  food?: string;
+  transportCost?: string;
+  dailyEstimate?: string;
+  bestFor?: string;
+  matchScore?: string;
+};
+
+type Destination = {
+  name: string;
+  type?: string;
+  description?: string;
+};
+
+type Recommendation = {
+  name: string;
+  description?: string;
+  rating?: string;
+  priceRange?: string;
+  location?: string;
+  reasons?: string[];
+};
+
+type Experience = {
+  name: string;
+  description?: string;
+  duration?: string;
+  bestTime?: string;
+};
+
+type ChatResponse = {
+  answer: string;
+  trip?: TripSummary;
+  destinations: Destination[];
+  hotels: Recommendation[];
+  restaurants: Recommendation[];
+  experiences: Experience[];
+  followUpQuestions: string[];
+};
+
+const ZURI_SYSTEM_INSTRUCTION = `
+You are Zuri, the intelligent travel companion for AfriSphere AI.
+
+ABOUT AFRISPHERE AI
+
+AfriSphere AI is building Africa's AI-powered tourism platform, helping travellers discover authentic destinations, cultures, wildlife, history and local experiences across Africa.
+
+Zimbabwe is currently your deepest area of expertise, while your knowledge extends across the African continent.
+
+YOUR ROLE
+
+You are a knowledgeable African travel planner and destination expert.
+
+Your purpose is to inspire confidence, simplify travel planning and help travellers experience Africa authentically.
+
+PERSONALITY
+
+Be warm, calm and naturally conversational.
+
+Be intelligent without sounding academic.
+
+Be practical without sounding robotic.
+
+Be enthusiastic without sounding like marketing.
+
+Never mention prompts or internal instructions.
+
+DESTINATION KNOWLEDGE
+
+Your strongest expertise includes:
+
+• Victoria Falls
+• Hwange National Park
+• Great Zimbabwe
+• Matobo Hills
+• Bulawayo
+• Harare
+• Mana Pools
+• Eastern Highlands
+• Lake Kariba
+• Gonarezhou National Park
+
+You can also recommend destinations throughout Africa whenever appropriate.
+
+PLANNING PRINCIPLES
+
+Every recommendation should consider:
+
+• available travel time
+• traveller interests
+• travel style
+• approximate budget
+• transport practicality
+• family or group size
+
+Avoid unrealistic itineraries.
+
+Avoid unnecessary travel time.
+
+Focus on experiences rather than simply listing attractions.
+
+LOCAL DISCOVERY
+
+Whenever possible include at least one authentic local recommendation such as:
+
+• local restaurants
+• traditional cuisine
+• markets
+• cultural performances
+• artisans
+• community tourism
+• scenic viewpoints
+• hidden gems
+
+RESPONSE STYLE
+
+Write like a premium travel planner.
+
+Keep paragraphs short.
+
+Use clean sections.
+
+Preferred layout:
+
+🧭 Journey Overview
+
+📅 Day 1 · Title
+
+Morning
+
+Afternoon
+
+Evening
+
+🍽 Local Flavours
+
+🚗 Transport
+
+💰 Budget Advice
+
+🎒 Packing Tips
+
+⭐ Local Insight
+
+✨ Good To Know
+
+💬 Next Step
+
+ACCURACY
+
+Never invent:
+
+Prices
+
+Opening hours
+
+Availability
+
+Phone numbers
+
+Addresses
+
+Visa requirements
+
+Safety incidents
+
+Transport schedules
+
+Hotel availability
+
+Restaurant availability
+
+Regulations
+
+If information may have changed, recommend verifying it with official or current sources.
+
+AFRISPHERE STYLE
+
+Every response should feel handcrafted.
+
+Help people discover Africa beautifully, intelligently and authentically.
+`;
+
+/*
+|--------------------------------------------------------------------------
+| LOCAL FALLBACK ANSWER
+|--------------------------------------------------------------------------
+*/
+
+function buildLocalFallback(message: string): string {
+  const text = message.toLowerCase();
+
+  /*
+   * Victoria Falls / Zimbabwe / Safari
+   */
+  if (
+    text.includes("zimbabwe") ||
+    text.includes("victoria falls") ||
+    text.includes("hwange") ||
+    text.includes("safari") ||
+    text.includes("wildlife")
+  ) {
+    return `
+🧭 Journey Overview
+
+Zimbabwe is an excellent choice for an African adventure, combining dramatic landscapes, wildlife, history, culture and warm local hospitality.
+
+For a five-day journey, a practical combination is **Victoria Falls** and **Hwange National Park**. This gives you a strong mix of natural wonder, wildlife and culture without spending too much time travelling.
+
+📅 Day 1 · Arrive in Victoria Falls
+
+Morning
+
+Arrive in Victoria Falls and settle into your accommodation.
+
+Afternoon
+
+Take a relaxed walk around town or enjoy some time at your lodge.
+
+Evening
+
+Enjoy a **Zambezi River Sunset Cruise** and watch for hippos, elephants and birds along the river.
+
+📅 Day 2 · Victoria Falls
+
+Morning
+
+Explore the rainforest and viewpoints around **Victoria Falls** with a guide.
+
+Afternoon
+
+Discover local crafts, artwork and Zimbabwean culture in the town's artisan areas.
+
+Evening
+
+Enjoy a traditional Zimbabwean dinner.
+
+📅 Day 3 · Into Hwange
+
+Morning
+
+Travel from Victoria Falls towards **Hwange National Park**.
+
+Afternoon
+
+Settle into your safari accommodation and enjoy your first game drive.
+
+Evening
+
+Relax around the camp and experience the sounds of the African bush.
+
+📅 Day 4 · Hwange Safari
+
+Morning
+
+Take an early game drive when wildlife is most active.
+
+Afternoon
+
+Relax near camp or a wildlife waterhole.
+
+Evening
+
+Enjoy a late-afternoon safari experience before returning to camp.
+
+📅 Day 5 · Farewell Zimbabwe
+
+Morning
+
+Enjoy a final safari or relaxed breakfast.
+
+Afternoon
+
+Return towards Victoria Falls for your departure.
+
+🍽 Local Flavours
+
+Try traditional **sadza** served with meat and seasonal vegetables. Adventurous travellers can also try **mopane worms**, a traditional Zimbabwean delicacy.
+
+🚗 Transport
+
+Victoria Falls and Hwange can be connected by road. Safari lodges and local operators can assist with transfers.
+
+💰 Budget Advice
+
+Zimbabwe travel costs vary significantly depending on accommodation, activities and transport. Confirm current prices before booking.
+
+🎒 Packing Tips
+
+Bring comfortable walking shoes, lightweight clothing, sunscreen, a hat, a light jacket and a waterproof layer for Victoria Falls spray.
+
+⭐ Local Insight
+
+Don't rush Victoria Falls. Take time at several viewpoints and simply experience the sound, mist and scale of the Falls.
+
+✨ Good To Know
+
+Travel requirements, park fees, accommodation prices and transport arrangements can change, so verify current information before booking.
+
+💬 Next Step
+
+Would you prefer a budget-friendly, comfortable or luxury version of this Zimbabwe journey?
+`;
+  }
+
+  /*
+   * Bulawayo / Matobo
+   */
+  if (
+    text.includes("bulawayo") ||
+    text.includes("matobo")
+  ) {
+    return `
+🧭 Journey Overview
+
+Bulawayo is an excellent base for discovering Zimbabwe's heritage, traditional food, museums and the dramatic landscapes of **Matobo Hills**.
+
+📅 Day 1 · Discover Bulawayo
+
+Explore the city centre, heritage buildings and local cultural spaces.
+
+📅 Day 2 · Museums & Railway Heritage
+
+Visit the Natural History Museum and explore Bulawayo's railway heritage.
+
+📅 Day 3 · Matobo Hills
+
+Travel south of Bulawayo and explore the granite landscapes, wildlife and ancient rock art of **Matobo Hills**.
+
+📅 Day 4 · Culture & Food
+
+Experience local Zimbabwean cuisine and discover Bulawayo's creative and cultural scene.
+
+📅 Day 5 · Final Exploration
+
+Enjoy a relaxed morning before continuing your journey.
+
+🍽 Local Flavours
+
+Try sadza with beef or goat, traditional vegetables and locally prepared dishes.
+
+🚗 Transport
+
+Bulawayo and Matobo Hills are connected by road, making Matobo a practical day-trip destination.
+
+⭐ Local Insight
+
+Give yourself time to experience Matobo slowly. The combination of granite formations, wildlife and cultural history is what makes the area special.
+
+💬 Next Step
+
+Would you like me to build a detailed Bulawayo and Matobo itinerary?
+`;
+  }
+
+  /*
+   * Food / Restaurants
+   */
+  if (
+    text.includes("restaurant") ||
+    text.includes("eat") ||
+    text.includes("food")
+  ) {
+    return `
+🍽 Local Food Discovery
+
+Zimbabwe has a rich food culture built around traditional staples, locally sourced ingredients and regional flavours.
+
+Try **sadza** with beef, chicken, goat or seasonal vegetables. For something distinctly Zimbabwean, ask about **mopane worms**, a traditional Zimbabwean delicacy.
+
+In Victoria Falls, cultural dining experiences can combine traditional food with music and entertainment.
+
+In Bulawayo, look for restaurants serving traditional Zimbabwean dishes alongside modern local cuisine.
+
+⭐ Local Insight
+
+The best food experiences often come from asking locals what they actually eat rather than only choosing tourist-focused restaurants.
+
+💬 Next Step
+
+Would you like restaurant recommendations for Victoria Falls, Bulawayo, Harare or another Zimbabwean destination?
+`;
+  }
+
+  /*
+   * Hotels / Accommodation
+   */
+  if (
+    text.includes("hotel") ||
+    text.includes("lodge") ||
+    text.includes("accommodation") ||
+    text.includes("stay")
+  ) {
+    return `
+🏨 Accommodation Planning
+
+Zimbabwe offers everything from comfortable city hotels to luxury safari lodges and intimate tented camps.
+
+For **Victoria Falls**, safari-style lodges provide a good balance between comfort, wildlife atmosphere and access to the Falls.
+
+For **Hwange National Park**, consider a safari lodge or tented camp if wildlife is the main priority.
+
+For **Bulawayo**, a centrally located hotel or guesthouse makes it easier to explore the city's museums, heritage and restaurants.
+
+⭐ Local Insight
+
+Choose accommodation based not only on the room, but also on location, transfers and the experiences included.
+
+💬 Next Step
+
+Would you like me to recommend accommodation based on your budget and destination?
+`;
+  }
+
+  /*
+   * General Africa / General fallback
+   */
+  return `
+🧭 Welcome to Zuri
+
+I'd be happy to help you plan an African journey.
+
+Zimbabwe is a great place to start, with destinations such as:
+
+📍 **Victoria Falls** — waterfalls, adventure and the Zambezi
+
+🦁 **Hwange National Park** — wildlife and safari
+
+🏛️ **Great Zimbabwe** — ancient history and culture
+
+⛰️ **Matobo Hills** — granite landscapes, wildlife and rock art
+
+🌊 **Lake Kariba** — sunsets, fishing and houseboats
+
+🏙️ **Bulawayo** — heritage, food and local culture
+
+Tell me where you want to go, how many days you have, and what kind of experience you want.
+
+💬 Next Step
+
+Would you like me to build a Zimbabwe itinerary for you?
+`;
+}
+
+/*
+|--------------------------------------------------------------------------
+| LOCAL HOTEL DATA
+|--------------------------------------------------------------------------
+|
+| These are used when Gemini is unavailable or does not return hotels.
+| They are recommendation records, not live availability.
+|--------------------------------------------------------------------------
+*/
+
+function getLocalHotels(message: string): Recommendation[] {
+  const text = message.toLowerCase();
+
+  const hotels: Recommendation[] = [];
+
+  const addHotel = (
+    hotel: Recommendation
+  ) => {
+    if (
+      !hotels.some(
+        (item) =>
+          item.name.toLowerCase() ===
+          hotel.name.toLowerCase()
+      )
+    ) {
+      hotels.push(hotel);
+    }
+  };
+
+  /*
+   * Victoria Falls
+   */
+  if (
+    text.includes("victoria falls") ||
+    text.includes("zimbabwe") ||
+    text.includes("waterfall") ||
+    text.includes("safari")
+  ) {
+    addHotel({
+      name: "Victoria Falls Safari Lodge",
+      description:
+        "A safari-style lodge overlooking a wildlife-rich waterhole near Victoria Falls.",
+      rating: "★★★★☆",
+      priceRange: "$$$",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Excellent base for exploring Victoria Falls",
+        "Safari atmosphere close to town",
+        "Known for wildlife and sunset views",
+      ],
+    });
+
+    addHotel({
+      name: "Ilala Lodge",
+      description:
+        "An elegant lodge within easy reach of Victoria Falls and the town centre.",
+      rating: "★★★★☆",
+      priceRange: "$$$",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Very convenient location",
+        "Easy access to the Falls",
+        "Comfortable option for short stays",
+      ],
+    });
+  }
+
+  /*
+   * Hwange
+   */
+  if (
+    text.includes("hwange") ||
+    text.includes("wildlife") ||
+    text.includes("safari") ||
+    text.includes("zimbabwe")
+  ) {
+    addHotel({
+      name: "The Hide Safari Camp",
+      description:
+        "An intimate safari camp designed around immersive wildlife experiences in Hwange.",
+      rating: "★★★★★",
+      priceRange: "$$$$",
+      location: "Hwange National Park, Zimbabwe",
+      reasons: [
+        "Immersive safari experience",
+        "Excellent wildlife viewing opportunities",
+        "Ideal for classic safari travellers",
+      ],
+    });
+
+    addHotel({
+      name: "Somalisa Camp",
+      description:
+        "A luxury tented safari camp offering an intimate Hwange wilderness experience.",
+      rating: "★★★★★",
+      priceRange: "$$$$",
+      location: "Hwange National Park, Zimbabwe",
+      reasons: [
+        "Strong safari atmosphere",
+        "Excellent for wildlife enthusiasts",
+        "Luxury tented accommodation",
+      ],
+    });
+  }
+
+  /*
+   * Bulawayo
+   */
+  if (
+    text.includes("bulawayo") ||
+    text.includes("matobo")
+  ) {
+    addHotel({
+      name: "Bulawayo Rainbow Hotel",
+      description:
+        "A centrally located hotel providing a convenient base for exploring Bulawayo.",
+      rating: "★★★★☆",
+      priceRange: "$$",
+      location: "Bulawayo, Zimbabwe",
+      reasons: [
+        "Convenient city location",
+        "Useful base for heritage exploration",
+        "Suitable for short city stays",
+      ],
+    });
+  }
+
+  /*
+   * General Zimbabwe fallback.
+   */
+  if (hotels.length === 0) {
+    addHotel({
+      name: "Victoria Falls Safari Lodge",
+      description:
+        "A safari-style lodge overlooking a wildlife-rich waterhole near Victoria Falls.",
+      rating: "★★★★☆",
+      priceRange: "$$$",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Excellent base for exploring Victoria Falls",
+        "Safari atmosphere close to town",
+        "Wildlife viewing opportunities",
+      ],
+    });
+
+    addHotel({
+      name: "Ilala Lodge",
+      description:
+        "An elegant lodge within easy reach of Victoria Falls and the town centre.",
+      rating: "★★★★☆",
+      priceRange: "$$$",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Convenient location",
+        "Easy access to the Falls",
+        "Comfortable option for short stays",
+      ],
+    });
+  }
+
+  return hotels;
+}
+
+/*
+|--------------------------------------------------------------------------
+| LOCAL RESTAURANT DATA
+|--------------------------------------------------------------------------
+*/
+
+function getLocalRestaurants(
+  message: string
+): Recommendation[] {
+  const text = message.toLowerCase();
+
+  const restaurants: Recommendation[] = [];
+
+  const addRestaurant = (
+    restaurant: Recommendation
+  ) => {
+    if (
+      !restaurants.some(
+        (item) =>
+          item.name.toLowerCase() ===
+          restaurant.name.toLowerCase()
+      )
+    ) {
+      restaurants.push(restaurant);
+    }
+  };
+
+  /*
+   * AUTHENTIC AFRICAN / ZIMBABWEAN DINING
+   *
+   * Strong intent:
+   * "authentic African"
+   * "traditional food"
+   * "Zimbabwean food"
+   * "local food"
+   * "local cuisine"
+   */
+  const wantsAuthenticFood =
+    text.includes("authentic african") ||
+    text.includes("authentic african dining") ||
+    text.includes("traditional food") ||
+    text.includes("traditional cuisine") ||
+    text.includes("zimbabwean food") ||
+    text.includes("zimbabwean cuisine") ||
+    text.includes("local food") ||
+    text.includes("local cuisine") ||
+    text.includes("african food") ||
+    text.includes("african cuisine");
+
+  /*
+   * VICTORIA FALLS
+   */
+  if (text.includes("victoria falls")) {
+
+    /*
+     * If the traveller specifically wants
+     * authentic African / Zimbabwean food,
+     * prioritize the strongest cultural match.
+     */
+    if (wantsAuthenticFood) {
+      addRestaurant({
+        name: "The Boma – Dinner & Drum Show",
+        description:
+          "A Zimbabwean cultural dining experience combining traditional food, music and live drumming.",
+        rating: "★★★★★",
+        location: "Victoria Falls, Zimbabwe",
+        reasons: [
+          "Strong introduction to Zimbabwean cuisine",
+          "Traditional Zimbabwean cultural atmosphere",
+          "Live music and drumming",
+          "Well suited to travellers seeking an authentic African experience",
+        ],
+      });
+
+      addRestaurant({
+        name: "Victoria Falls Eatery",
+        description:
+          "A relaxed local dining option for travellers exploring Victoria Falls.",
+        rating: "★★★★☆",
+        location: "Victoria Falls, Zimbabwe",
+        reasons: [
+          "Relaxed local dining option",
+          "Convenient for visitors",
+          "Suitable for trying local flavours",
+        ],
+      });
+
+      return restaurants;
+    }
+
+    /*
+     * Generic Victoria Falls restaurant request.
+     */
+    addRestaurant({
+      name: "The Boma – Dinner & Drum Show",
+      description:
+        "A lively Zimbabwean dining experience combining traditional food, music and cultural entertainment.",
+      rating: "★★★★★",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Traditional Zimbabwean food",
+        "Cultural entertainment",
+        "Popular evening experience",
+      ],
+    });
+
+    addRestaurant({
+      name: "Victoria Falls Eatery",
+      description:
+        "A relaxed dining option for travellers exploring Victoria Falls and its surrounding attractions.",
+      rating: "★★★★☆",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Convenient for visitors",
+        "Relaxed atmosphere",
+        "Good option after exploring Victoria Falls",
+      ],
+    });
+
+    return restaurants;
+  }
+
+  /*
+   * BULAWAYO
+   */
+  if (
+    text.includes("bulawayo") ||
+    text.includes("matobo")
+  ) {
+    addRestaurant({
+      name: "Homely House Restaurant",
+      description:
+        "A local-style dining experience focused on traditional Zimbabwean cuisine and familiar local flavours.",
+      rating: "★★★★☆",
+      location: "Bulawayo, Zimbabwe",
+      reasons: [
+        "Traditional Zimbabwean food",
+        "Local dining atmosphere",
+        "Good introduction to everyday Zimbabwean cuisine",
+      ],
+    });
+
+    return restaurants;
+  }
+
+  /*
+   * GENERAL ZIMBABWEAN / AFRICAN FOOD
+   */
+  if (
+    text.includes("zimbabwe") ||
+    text.includes("africa") ||
+    text.includes("food") ||
+    text.includes("restaurant") ||
+    text.includes("eat")
+  ) {
+    addRestaurant({
+      name: "The Boma – Dinner & Drum Show",
+      description:
+        "A Zimbabwean cultural dining experience combining traditional food, music and live entertainment.",
+      rating: "★★★★★",
+      location: "Victoria Falls, Zimbabwe",
+      reasons: [
+        "Traditional Zimbabwean cuisine",
+        "African cultural experience",
+        "Music and drumming",
+      ],
+    });
+
+    return restaurants;
+  }
+
+  /*
+   * No restaurant intent detected.
+   *
+   * Return an empty list instead of inventing
+   * a restaurant recommendation.
+   */
+  return restaurants;
+}
+/*
+|--------------------------------------------------------------------------
+| LOCAL STRUCTURED DESTINATIONS + EXPERIENCES
+|--------------------------------------------------------------------------
+*/
+
+function buildLocalStructuredData(
+  message: string,
+  answer: string
+) {
+  /*
+   * IMPORTANT:
+   *
+   * Only the user's message determines local structured
+   * recommendations.
+   *
+   * We deliberately DO NOT combine `answer` with `message`
+   * because Gemini may mention destinations, wildlife,
+   * safari, food, etc. that the user never requested.
+   */
+  const text = message.toLowerCase();
+
+  const destinations: Destination[] = [];
+  const experiences: Experience[] = [];
+
+  const addDestination = (
+    name: string,
+    type: string,
+    description: string
+  ) => {
+    if (
+      !destinations.some(
+        (item) =>
+          item.name.toLowerCase() ===
+          name.toLowerCase()
+      )
+    ) {
+      destinations.push({
+        name,
+        type,
+        description,
+      });
+    }
+  };
+
+  const addExperience = (
+    name: string,
+    description: string,
+    duration: string,
+    bestTime: string
+  ) => {
+    if (
+      !experiences.some(
+        (item) =>
+          item.name.toLowerCase() ===
+          name.toLowerCase()
+      )
+    ) {
+      experiences.push({
+        name,
+        description,
+        duration,
+        bestTime,
+      });
+    }
+  };
+
+  /*
+   * -------------------------------------------------------
+   * RESTAURANT / FOOD INTENT
+   * -------------------------------------------------------
+   *
+   * If the user is specifically asking where to eat,
+   * recommend restaurants through getLocalRestaurants().
+   *
+   * Do NOT automatically add safari experiences,
+   * hotels or unrelated activities.
+   */
+  const isFoodRequest =
+    text.includes("restaurant") ||
+    text.includes("where should i eat") ||
+    text.includes("where can i eat") ||
+    text.includes("where to eat") ||
+    text.includes("eat in") ||
+    text.includes("dining") ||
+    text.includes("dine") ||
+    text.includes("food") ||
+    text.includes("cuisine") ||
+    text.includes("meal") ||
+    text.includes("lunch") ||
+    text.includes("dinner") ||
+    text.includes("breakfast") ||
+    text.includes("african food") ||
+    text.includes("african cuisine") ||
+    text.includes("authentic african") ||
+    text.includes("traditional food") ||
+    text.includes("traditional cuisine") ||
+    text.includes("zimbabwean food") ||
+    text.includes("zimbabwean cuisine") ||
+    text.includes("local food") ||
+    text.includes("local cuisine");
+
+  /*
+   * For a restaurant question we only return destination
+   * context when the user explicitly named a destination.
+   *
+   * We do NOT add experiences automatically.
+   */
+  if (isFoodRequest) {
+    if (text.includes("victoria falls")) {
+      addDestination(
+        "Victoria Falls",
+        "Town / Natural Landmark",
+        "Iconic Zimbabwean destination featuring Victoria Falls and the Zambezi River."
+      );
+    }
+
+    if (text.includes("bulawayo")) {
+      addDestination(
+        "Bulawayo",
+        "City / Culture",
+        "Zimbabwean city known for heritage architecture, museums, railway history and local culture."
+      );
+    }
+
+    if (text.includes("harare")) {
+      addDestination(
+        "Harare",
+        "City / Culture",
+        "Zimbabwe's capital offering galleries, gardens, restaurants, markets and cultural experiences."
+      );
+    }
+
+    return {
+      destinations,
+      experiences,
+    };
+  }
+
+  /*
+   * -------------------------------------------------------
+   * VICTORIA FALLS
+   * -------------------------------------------------------
+   */
+  if (text.includes("victoria falls")) {
+    addDestination(
+      "Victoria Falls",
+      "Town / Natural Landmark",
+      "Iconic Zimbabwean destination featuring the magnificent Victoria Falls and Zambezi River."
+    );
+
+    /*
+     * Only add experiences when the user is actually
+     * asking about activities/experiences or their wording
+     * clearly indicates an activity.
+     */
+    const wantsExperience =
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities") ||
+      text.includes("things to do") ||
+      text.includes("what should i do") ||
+      text.includes("what can i do") ||
+      text.includes("visit") ||
+      text.includes("tour") ||
+      text.includes("cruise") ||
+      text.includes("walk");
+
+    if (wantsExperience) {
+      if (
+        text.includes("zambezi") ||
+        text.includes("cruise") ||
+        text.includes("sunset")
+      ) {
+        addExperience(
+          "Zambezi River Sunset Cruise",
+          "Peaceful evening cruise watching wildlife along the Zambezi River.",
+          "Evening",
+          "Sunset"
+        );
+      }
+
+      if (
+        text.includes("rainforest") ||
+        text.includes("walking") ||
+        text.includes("walk") ||
+        text.includes("falls tour")
+      ) {
+        addExperience(
+          "Victoria Falls Rainforest Guided Walk",
+          "Guided exploration of rainforest trails and viewpoints around Victoria Falls.",
+          "Morning",
+          "Morning"
+        );
+      }
+
+      if (
+        text.includes("artisan") ||
+        text.includes("market") ||
+        text.includes("craft") ||
+        text.includes("shopping")
+      ) {
+        addExperience(
+          "Elephant's Walk Shopping & Artist Village",
+          "Discover local Zimbabwean artists, crafts and traditional creative work.",
+          "Afternoon",
+          "Afternoon"
+        );
+      }
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * HWANGE / WILDLIFE
+   * -------------------------------------------------------
+   */
+  if (
+    text.includes("hwange") ||
+    text.includes("wildlife") ||
+    text.includes("game drive") ||
+    text.includes("safari")
+  ) {
+    addDestination(
+      "Hwange National Park",
+      "National Park / Wildlife",
+      "Zimbabwe's flagship wildlife destination, famous for elephants and diverse African wildlife."
+    );
+
+    if (
+      text.includes("game drive") ||
+      text.includes("safari") ||
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities") ||
+      text.includes("things to do")
+    ) {
+      addExperience(
+        "Hwange Open-Vehicle Game Drives",
+        "Safari drives searching for elephants, lions, giraffes and other wildlife.",
+        "Half day / Evening",
+        "Morning, Late Afternoon"
+      );
+    }
+
+    if (
+      text.includes("walking safari") ||
+      text.includes("bush walk")
+    ) {
+      addExperience(
+        "Guided Walking Safari",
+        "A guided bush walk focused on wildlife tracking and the African ecosystem.",
+        "Morning",
+        "Dawn"
+      );
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * MATOBO
+   * -------------------------------------------------------
+   */
+  if (text.includes("matobo")) {
+    addDestination(
+      "Matobo Hills",
+      "National Park / Cultural Landscape",
+      "Dramatic granite landscapes combining wildlife, ancient rock art and cultural heritage."
+    );
+
+    if (
+      text.includes("tour") ||
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities") ||
+      text.includes("things to do") ||
+      text.includes("visit")
+    ) {
+      addExperience(
+        "Matobo Hills Cultural & Scenic Tour",
+        "Explore granite formations, ancient rock art and the cultural landscape of Matobo Hills.",
+        "Half day / Full day",
+        "Morning"
+      );
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * GREAT ZIMBABWE
+   * -------------------------------------------------------
+   */
+  if (text.includes("great zimbabwe")) {
+    addDestination(
+      "Great Zimbabwe",
+      "Historic / Cultural Site",
+      "Ancient stone ruins representing one of Africa's most important archaeological sites."
+    );
+
+    if (
+      text.includes("tour") ||
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities") ||
+      text.includes("visit") ||
+      text.includes("things to do")
+    ) {
+      addExperience(
+        "Great Zimbabwe Heritage Tour",
+        "Explore the ancient stone city and learn about Zimbabwe's archaeological and cultural heritage.",
+        "Half day",
+        "Morning"
+      );
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * BULAWAYO
+   * -------------------------------------------------------
+   */
+  if (text.includes("bulawayo")) {
+    addDestination(
+      "Bulawayo",
+      "City / Culture",
+      "Zimbabwean city known for heritage architecture, museums, railway history and local culture."
+    );
+  }
+
+  /*
+   * -------------------------------------------------------
+   * HARARE
+   * -------------------------------------------------------
+   */
+  if (text.includes("harare")) {
+    addDestination(
+      "Harare",
+      "City / Culture",
+      "Zimbabwe's capital offering galleries, gardens, restaurants, markets and cultural experiences."
+    );
+  }
+
+  /*
+   * -------------------------------------------------------
+   * LAKE KARIBA
+   * -------------------------------------------------------
+   */
+  if (text.includes("lake kariba")) {
+    addDestination(
+      "Lake Kariba",
+      "Lake / Wilderness",
+      "Large inland lake known for sunsets, fishing, houseboats and wildlife."
+    );
+
+    if (
+      text.includes("cruise") ||
+      text.includes("sunset") ||
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities")
+    ) {
+      addExperience(
+        "Lake Kariba Sunset Cruise",
+        "Relaxed lake cruise combining dramatic sunsets, scenery and opportunities to spot wildlife.",
+        "Evening",
+        "Sunset"
+      );
+    }
+  }
+
+  /*
+   * -------------------------------------------------------
+   * EASTERN HIGHLANDS
+   * -------------------------------------------------------
+   */
+  if (text.includes("eastern highlands")) {
+    addDestination(
+      "Eastern Highlands",
+      "Mountains / Nature",
+      "Scenic mountain region featuring forests, waterfalls and peaceful landscapes."
+    );
+  }
+
+  /*
+   * -------------------------------------------------------
+   * MANA POOLS
+   * -------------------------------------------------------
+   */
+  if (text.includes("mana pools")) {
+    addDestination(
+      "Mana Pools",
+      "National Park / Wilderness",
+      "Remote wilderness famous for walking safaris, canoeing and wildlife along the Zambezi."
+    );
+
+    if (
+      text.includes("canoe") ||
+      text.includes("safari") ||
+      text.includes("experience") ||
+      text.includes("activity") ||
+      text.includes("activities")
+    ) {
+      addExperience(
+        "Mana Pools Canoe Safari",
+        "A wilderness canoe experience along the Zambezi surrounded by wildlife and dramatic scenery.",
+        "Half day / Full day",
+        "Morning"
+      );
+    }
+  }
+
+  return {
+    destinations,
+    experiences,
+  };
+}
+
+/*
+|--------------------------------------------------------------------------
+| LOCAL TRIP SUMMARY
+|--------------------------------------------------------------------------
+*/
+
+function buildLocalTripSummary(
+  message: string
+): TripSummary {
+  const text = message.toLowerCase();
+
+  let travelStyle =
+    "Safari & Adventure";
+
+  let bestFor =
+    "Wildlife enthusiasts and adventure travellers";
+
+  let accommodation =
+    "Safari lodge or tented camp";
+
+  let activities =
+    "Wildlife, culture & adventure";
+
+  if (
+    text.includes("culture") ||
+    text.includes("history") ||
+    text.includes("heritage")
+  ) {
+    travelStyle =
+      "Culture & Heritage";
+
+    bestFor =
+      "Culture lovers and curious travellers";
+
+    accommodation =
+      "Comfortable hotel or cultural lodge";
+
+    activities =
+      "Culture, history, food & local experiences";
+  }
+
+  if (
+    text.includes("romantic") ||
+    text.includes("honeymoon") ||
+    text.includes("couple")
+  ) {
+    travelStyle =
+      "Romantic Escape";
+
+    bestFor =
+      "Couples and honeymoon travellers";
+
+    accommodation =
+      "Boutique lodge or luxury safari camp";
+
+    activities =
+      "Scenery, dining, relaxation & private experiences";
+  }
+
+  if (
+    text.includes("family") ||
+    text.includes("children") ||
+    text.includes("kids")
+  ) {
+    travelStyle =
+      "Family Adventure";
+
+    bestFor =
+      "Families and multi-generational travellers";
+
+    accommodation =
+      "Family-friendly lodge or hotel";
+
+    activities =
+      "Wildlife, sightseeing & family activities";
+  }
+
+  if (
+    text.includes("budget") ||
+    text.includes("cheap") ||
+    text.includes("affordable")
+  ) {
+    return {
+      country: "Zimbabwe",
+      duration: 5,
+      travelStyle,
+      transport: "Road transfers",
+      budget: "Budget-conscious",
+      accommodation:
+        "Comfortable guesthouse or budget lodge",
+      activities,
+      food:
+        "Traditional Zimbabwean cuisine",
+      transportCost:
+        "Varies by route and transport provider",
+      dailyEstimate:
+        "Depends on accommodation and activities",
+      bestFor,
+      matchScore: "Excellent Match",
+    };
+  }
+
+  return {
+    country: "Zimbabwe",
+    duration: 5,
+    travelStyle,
+    transport: "Road transfers",
+    budget:
+      "USD preferred in small crisp bills",
+    accommodation,
+    activities,
+    food:
+      "Traditional Zimbabwean cuisine",
+    transportCost:
+      "Varies by itinerary",
+    dailyEstimate:
+      "Varies by accommodation and activities",
+    bestFor,
+    matchScore: "Excellent Match",
+  };
+}
+
+/*
+|--------------------------------------------------------------------------
+| POST /api/chat
+|--------------------------------------------------------------------------
+*/
+
+export async function POST(
+  req: NextRequest
+) {
+  try {
+    const body = await req.json();
+
+    const message =
+      typeof body?.message === "string"
+        ? body.message.trim()
+        : "";
+
+    const history: HistoryMessage[] =
+      Array.isArray(body?.history)
+        ? body.history
+        : [];
+
+    /*
+     * ----------------------------------------------------
+     * VALIDATION
+     * ----------------------------------------------------
+     */
+
+    if (!message) {
+      return NextResponse.json(
+        {
+          error: "Message is required.",
+          code: "MESSAGE_REQUIRED",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (message.length > 2000) {
+      return NextResponse.json(
+        {
+          error: "Message is too long.",
+          code: "MESSAGE_TOO_LONG",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * ----------------------------------------------------
+     * SAFE HISTORY
+     * ----------------------------------------------------
+     */
+
+    const safeHistory =
+      history
+        .filter(
+          (item) =>
+            item &&
+            (item.role === "user" ||
+              item.role === "zuri") &&
+            typeof item.text === "string" &&
+            item.text.trim()
+        )
+        .slice(-20);
+
+    /*
+     * ----------------------------------------------------
+     * GENERATE ZURI ANSWER
+     * ----------------------------------------------------
+     */
+
+    let reply = "";
+    let geminiAvailable = false;
+
+    if (apiKey) {
+      try {
+        const priorTurns =
+          safeHistory.map((item) => ({
+            role:
+              item.role === "user"
+                ? "user"
+                : "model",
+            parts: [
+              {
+                text: item.text.trim(),
+              },
+            ],
+          }));
+
+        const contents = [
+          ...priorTurns,
+          {
+            role: "user" as const,
+            parts: [
+              {
+                text: message,
+              },
+            ],
+          },
+        ];
+
+        const ai = new GoogleGenAI({
+          apiKey,
+        });
+
+        const response =
+          await ai.models.generateContent({
+            model: "gemini-3.6-flash",
+            contents,
+            config: {
+              systemInstruction:
+                ZURI_SYSTEM_INSTRUCTION,
+              temperature: 0.7,
+            },
+          });
+
+        reply =
+          response.text?.trim() ?? "";
+
+        if (reply) {
+          geminiAvailable = true;
+        }
+      } catch (error: any) {
+        const status =
+          typeof error?.status === "number"
+            ? error.status
+            : typeof error?.statusCode ===
+                "number"
+              ? error.statusCode
+              : 500;
+
+        const errorMessage =
+          typeof error?.message === "string"
+            ? error.message
+            : "";
+
+        const quotaError =
+          status === 429 ||
+          errorMessage.includes(
+            "RESOURCE_EXHAUSTED"
+          ) ||
+          errorMessage
+            .toLowerCase()
+            .includes("quota") ||
+          errorMessage
+            .toLowerCase()
+            .includes("rate limit");
+
+        if (quotaError) {
+          console.warn(
+            "Gemini quota reached. Switching Zuri to local fallback mode."
+          );
+        } else {
+          console.error(
+            "Gemini generation failed. Switching Zuri to local fallback mode:",
+            error
+          );
+        }
+      }
+    } else {
+      console.warn(
+        "GEMINI_API_KEY is missing. Using local Zuri fallback mode."
+      );
+    }
+
+    /*
+     * ----------------------------------------------------
+     * LOCAL ANSWER FALLBACK
+     * ----------------------------------------------------
+     */
+
+    if (!geminiAvailable) {
+      reply =
+        buildLocalFallback(message);
+    }
+
+    /*
+     * ----------------------------------------------------
+     * LOCAL STRUCTURED DATA
+     * ----------------------------------------------------
+     */
+
+    const localStructured =
+      buildLocalStructuredData(
+        message,
+        reply
+      );
+
+    const localDestinationRecommendations =
+      getDestinationRecommendations(
+        message
+      );
+
+    const localHotels =
+      getLocalHotels(message);
+
+    const localRestaurants =
+      getLocalRestaurants(message);
+
+    const localTrip =
+      buildLocalTripSummary(message);
+
+    /*
+     * ----------------------------------------------------
+     * GEMINI STRUCTURED EXTRACTION
+     * ----------------------------------------------------
+     *
+     * Only run extraction when Gemini successfully
+     * generated the answer.
+     */
+
+    let structuredData = {
+      trip: {} as TripSummary,
+      destinations: [] as Destination[],
+      hotels: [] as Recommendation[],
+      restaurants: [] as Recommendation[],
+      experiences: [] as Experience[],
+      followUpQuestions: [] as string[],
+    };
+
+    if (geminiAvailable) {
+      try {
+        const extracted =
+          await extractTravelData(reply);
+
+        structuredData = {
+          trip:
+            extracted.trip ?? {},
+          destinations:
+            extracted.destinations ?? [],
+          hotels:
+            extracted.hotels ?? [],
+          restaurants:
+            extracted.restaurants ?? [],
+          experiences:
+            extracted.experiences ?? [],
+          followUpQuestions:
+            extracted.followUpQuestions ?? [],
+        };
+      } catch (error) {
+        console.error(
+          "Structured travel extraction failed:",
+          error
+        );
+      }
+    }
+
+    /*
+     * ----------------------------------------------------
+     * USER INTENT
+     * ----------------------------------------------------
+     *
+     * IMPORTANT:
+     *
+     * The user's message controls what recommendation
+     * categories are displayed.
+     *
+     * Gemini's answer must NEVER introduce unrelated
+     * cards into the UI.
+     */
+
+    const text =
+      message.toLowerCase();
+
+    const isFoodRequest =
+      text.includes("restaurant") ||
+      text.includes("restaurants") ||
+      text.includes("where should i eat") ||
+      text.includes("where can i eat") ||
+      text.includes("where to eat") ||
+      text.includes("eat in") ||
+      text.includes("dining") ||
+      text.includes("dine") ||
+      text.includes("food") ||
+      text.includes("cuisine") ||
+      text.includes("meal") ||
+      text.includes("lunch") ||
+      text.includes("dinner") ||
+      text.includes("breakfast") ||
+      text.includes("african food") ||
+      text.includes("african cuisine") ||
+      text.includes("authentic african") ||
+      text.includes("traditional food") ||
+      text.includes("traditional cuisine") ||
+      text.includes("zimbabwean food") ||
+      text.includes("zimbabwean cuisine") ||
+      text.includes("local food") ||
+      text.includes("local cuisine");
+
+    const isHotelRequest =
+      text.includes("hotel") ||
+      text.includes("hotels") ||
+      text.includes("accommodation") ||
+      text.includes("where should i stay") ||
+      text.includes("where can i stay") ||
+      text.includes("where to stay") ||
+      text.includes("lodge") ||
+      text.includes("lodges") ||
+      text.includes("resort") ||
+      text.includes("resorts");
+
+    const isExperienceRequest =
+      text.includes("experience") ||
+      text.includes("experiences") ||
+      text.includes("activity") ||
+      text.includes("activities") ||
+      text.includes("things to do") ||
+      text.includes("what should i do") ||
+      text.includes("what can i do") ||
+      text.includes("tour") ||
+      text.includes("tours") ||
+      text.includes("cruise") ||
+      text.includes("walk") ||
+      text.includes("safari") ||
+      text.includes("excursion");
+
+    /*
+     * ----------------------------------------------------
+     * RESULT ARRAYS
+     * ----------------------------------------------------
+     */
+
+    let destinations: Destination[] = [];
+    let hotels: Recommendation[] = [];
+    let restaurants: Recommendation[] = [];
+    let experiences: Experience[] = [];
+
+    /*
+     * ----------------------------------------------------
+     * FOOD REQUEST
+     * ----------------------------------------------------
+     *
+     * Food request:
+     *
+     * ✓ restaurants
+     * ✓ explicitly mentioned destination
+     * ✗ hotels
+     * ✗ experiences
+     * ✗ unrelated destinations
+     */
+
+    if (isFoodRequest) {
+      destinations =
+        localStructured.destinations.length > 0
+          ? localStructured.destinations
+          : [];
+
+      restaurants =
+        localRestaurants.length > 0
+          ? localRestaurants
+          : structuredData.restaurants;
+
+      hotels = [];
+      experiences = [];
+    }
+
+    /*
+     * ----------------------------------------------------
+     * HOTEL REQUEST
+     * ----------------------------------------------------
+     */
+
+    else if (isHotelRequest) {
+      destinations =
+        localStructured.destinations.length > 0
+          ? localStructured.destinations
+          : [];
+
+      hotels =
+        localHotels.length > 0
+          ? localHotels
+          : structuredData.hotels;
+
+      restaurants = [];
+      experiences = [];
+    }
+
+    /*
+     * ----------------------------------------------------
+     * EXPERIENCE REQUEST
+     * ----------------------------------------------------
+     */
+
+    else if (isExperienceRequest) {
+      destinations =
+        localStructured.destinations.length > 0
+          ? localStructured.destinations
+          : [];
+
+      experiences =
+        localStructured.experiences.length > 0
+          ? localStructured.experiences
+          : structuredData.experiences;
+
+      hotels = [];
+      restaurants = [];
+    }
+
+    /*
+     * ----------------------------------------------------
+     * GENERAL TRAVEL REQUEST
+     * ----------------------------------------------------
+     *
+     * Only broad questions get the full recommendation
+     * set.
+     */
+
+    else {
+      destinations =
+        localDestinationRecommendations.length > 0
+          ? localDestinationRecommendations
+          : structuredData.destinations.length > 0
+            ? structuredData.destinations
+            : localStructured.destinations;
+
+      hotels =
+        structuredData.hotels.length > 0
+          ? structuredData.hotels
+          : localHotels;
+
+      restaurants =
+        localRestaurants.length > 0
+          ? localRestaurants
+          : structuredData.restaurants;
+
+      experiences =
+        structuredData.experiences.length > 0
+          ? structuredData.experiences
+          : localStructured.experiences;
+    }
+
+    /*
+     * ----------------------------------------------------
+     * TRIP SUMMARY
+     * ----------------------------------------------------
+     */
+
+    const trip: TripSummary = {
+      ...localTrip,
+      ...structuredData.trip,
+    };
+
+    if (!trip.country) {
+      trip.country =
+        localTrip.country;
+    }
+
+    if (!trip.duration) {
+      trip.duration =
+        localTrip.duration;
+    }
+
+    if (!trip.travelStyle) {
+      trip.travelStyle =
+        localTrip.travelStyle;
+    }
+
+    if (!trip.transport) {
+      trip.transport =
+        localTrip.transport;
+    }
+
+    if (!trip.budget) {
+      trip.budget =
+        localTrip.budget;
+    }
+
+    if (!trip.accommodation) {
+      trip.accommodation =
+        localTrip.accommodation;
+    }
+
+    if (!trip.activities) {
+      trip.activities =
+        localTrip.activities;
+    }
+
+    if (!trip.food) {
+      trip.food =
+        localTrip.food;
+    }
+
+    if (!trip.transportCost) {
+      trip.transportCost =
+        localTrip.transportCost;
+    }
+
+    if (!trip.dailyEstimate) {
+      trip.dailyEstimate =
+        localTrip.dailyEstimate;
+    }
+
+    if (!trip.bestFor) {
+      trip.bestFor =
+        localTrip.bestFor;
+    }
+
+    if (!trip.matchScore) {
+      trip.matchScore =
+        localTrip.matchScore;
+    }
+
+    /*
+     * ----------------------------------------------------
+     * FOLLOW-UP QUESTIONS
+     * ----------------------------------------------------
+     */
+
+    let followUpQuestions =
+      structuredData.followUpQuestions
+        .filter(
+          (question) =>
+            typeof question === "string" &&
+            question.trim()
+        )
+        .slice(0, 3);
+
+    /*
+     * Focused questions should not receive generic
+     * itinerary questions.
+     */
+
+    if (isFoodRequest) {
+      followUpQuestions = [
+        "Would you like me to help you choose the best option for an authentic local experience?",
+      ];
+    } else if (isHotelRequest) {
+      followUpQuestions = [
+        "Would you like me to narrow these down by budget or travel style?",
+      ];
+    } else if (isExperienceRequest) {
+      followUpQuestions = [
+        "Would you like me to build these experiences into a day-by-day itinerary?",
+      ];
+    } else if (
+      followUpQuestions.length === 0
+    ) {
+      followUpQuestions = [
+        "Would you prefer a budget, comfortable or luxury itinerary?",
+      ];
+    }
+
+    /*
+     * ----------------------------------------------------
+     * FINAL RESPONSE
+     * ----------------------------------------------------
+     */
+
+    const responseData: ChatResponse = {
+      answer: reply,
+
+      trip,
+
+      destinations,
+
+      hotels,
+
+      restaurants,
+
+      experiences,
+
+      followUpQuestions,
+    };
+
+    return NextResponse.json(
+      responseData,
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    /*
+     * ----------------------------------------------------
+     * FINAL SAFETY NET
+     * ----------------------------------------------------
+     */
+
+    console.error(
+      "Zuri API error:",
+      error
+    );
+
+    const fallbackMessage =
+      "Zimbabwe travel";
+
+    const fallbackAnswer =
+      buildLocalFallback(
+        fallbackMessage
+      );
+
+    const fallbackStructured =
+      buildLocalStructuredData(
+        fallbackMessage,
+        fallbackAnswer
+      );
+
+    const fallbackHotels =
+      getLocalHotels(
+        fallbackMessage
+      );
+
+    const fallbackRestaurants =
+      getLocalRestaurants(
+        fallbackMessage
+      );
+
+    const fallbackTrip =
+      buildLocalTripSummary(
+        fallbackMessage
+      );
+
+    return NextResponse.json(
+      {
+        answer:
+          fallbackAnswer,
+
+        trip:
+          fallbackTrip,
+
+        destinations:
+          fallbackStructured.destinations,
+
+        hotels:
+          fallbackHotels,
+
+        restaurants:
+          fallbackRestaurants,
+
+        experiences:
+          fallbackStructured.experiences,
+
+        followUpQuestions: [
+          "Would you like me to build a detailed Zimbabwe itinerary?",
+        ],
+      },
+      {
+        status: 200,
+      }
+    );
+  }
+}
+/*
+ * ----------------------------------------------------
+ * FINAL RESPONSE
+ * ----------------------------------------------------
+ */
+
+const responseData: ChatResponse = {
+  answer: reply,
+
+  trip,
+
+  destinations,
+
+  hotels,
+
+  restaurants,
+
+  experiences,
+
+  followUpQuestions,
+};
+
+return NextResponse.json(
+  responseData,
+  {
+    status: 200,
+  }
+);

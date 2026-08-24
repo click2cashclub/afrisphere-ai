@@ -1,0 +1,66 @@
+{
+  "id": "zambezi-river",
+  "name": "Zambezi River",
+  "country": "Zimbabwe",
+  "region": "Matabeleland North",
+  "type": "River & Adventure Destination",
+
+  "heroImage": "/images/destinations/zimbabwe/zambezi-river/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/zambezi-river/hero.jpg"
+  ],
+
+  "summary": "One of Africa's great rivers, offering spectacular scenery, sunset cruises, wildlife encounters, fishing, canoeing, and adventure around Victoria Falls.",
+
+  "description": "The Zambezi River forms part of Zimbabwe's northwestern landscape and provides a spectacular setting for wildlife and adventure. Visitors can enjoy sunset cruises, canoeing, fishing, birdwatching, and views of wildlife along the river, particularly around Victoria Falls and the Zambezi National Park area.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "October"
+  },
+
+  "recommendedStay": "1–3 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -17.925,
+    "longitude": 25.850
+  },
+
+  "highlights": [
+    "Sunset Cruises",
+    "Canoe Safaris",
+    "Tiger Fishing",
+    "River Wildlife",
+    "Birdwatching",
+    "White Water Rafting"
+  ],
+
+  "wildlife": [
+    "Elephants",
+    "Hippos",
+    "Crocodiles",
+    "Buffalo",
+    "Waterbuck",
+    "Impala",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Bream",
+    "Tiger Fish",
+    "Sadza",
+    "Nyama",
+    "Muriwo"
+  ],
+
+  "travelTips": [
+    "Sunset cruises are particularly popular for scenery and wildlife viewing.",
+    "Use qualified guides for canoeing, rafting, fishing, and other river activities.",
+    "Carry sunscreen, sunglasses, a hat, and insect repellent.",
+    "Keep a safe distance from wildlife and follow your guide's instructions.",
+    "Book popular river activities in advance during peak travel periods."
+  ]
+}

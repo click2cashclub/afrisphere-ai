@@ -1,0 +1,63 @@
+{
+  "id": "great-zimbabwe",
+  "name": "Great Zimbabwe",
+  "country": "Zimbabwe",
+  "region": "Masvingo",
+  "type": "Historical Site",
+
+  "heroImage": "/images/destinations/zimbabwe/great-zimbabwe/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/great-zimbabwe/hero.jpg"
+  ],
+
+  "summary": "The magnificent stone ruins of Great Zimbabwe, an ancient African city and one of Zimbabwe's most important cultural and historical landmarks.",
+
+  "description": "Great Zimbabwe is an extraordinary archaeological site known for its massive granite stone walls, ancient enclosures, and impressive dry-stone architecture. The ruins provide a remarkable window into the history, culture, trade, and achievements of the medieval Kingdom of Zimbabwe.",
+
+  "bestTime": {
+    "from": "April",
+    "to": "October"
+  },
+
+  "recommendedStay": "1–2 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -20.267,
+    "longitude": 30.933
+  },
+
+  "highlights": [
+    "Great Enclosure",
+    "Hill Complex",
+    "Great Zimbabwe Ruins",
+    "Zimbabwe Bird",
+    "Archaeological Museum"
+  ],
+
+  "wildlife": [
+    "Impala",
+    "Zebra",
+    "Kudu",
+    "Warthog",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Mopane Worms",
+    "Traditional Chicken"
+  ],
+
+  "travelTips": [
+    "Wear comfortable walking shoes because the ruins involve uneven and sometimes steep terrain.",
+    "Allow several hours to explore the different sections of the monument.",
+    "Bring water, sunscreen, and a hat, particularly during warmer months.",
+    "Consider hiring a local guide to learn more about the history and significance of the ruins.",
+    "Carry small USD notes for local purchases and tips."
+  ]
+}

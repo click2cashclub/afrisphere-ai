@@ -1,0 +1,65 @@
+{
+  "id": "eastern-highlands",
+  "name": "Eastern Highlands",
+  "country": "Zimbabwe",
+  "region": "Manicaland",
+  "type": "Mountain & Nature Destination",
+
+  "heroImage": "/images/destinations/zimbabwe/eastern-highlands/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/eastern-highlands/hero.jpg"
+  ],
+
+  "summary": "A beautiful mountain region of Zimbabwe known for misty highlands, waterfalls, forests, tea estates, scenic viewpoints, and outdoor adventures.",
+
+  "description": "The Eastern Highlands stretch along Zimbabwe's eastern border and offer some of the country's most dramatic mountain scenery. Visitors can explore Nyanga, Chimanimani, and Vumba, with opportunities for hiking, waterfalls, nature walks, scenic drives, birdwatching, and experiencing the region's cool mountain climate.",
+
+  "bestTime": {
+    "from": "April",
+    "to": "September"
+  },
+
+  "recommendedStay": "2–4 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -18.950,
+    "longitude": 32.700
+  },
+
+  "highlights": [
+    "Nyanga National Park",
+    "Mutarazi Falls",
+    "Vumba Mountains",
+    "Chimanimani Mountains",
+    "Tea Estates",
+    "Mountain Hiking"
+  ],
+
+  "wildlife": [
+    "Samango Monkeys",
+    "Kudu",
+    "Eland",
+    "Zebra",
+    "Bushbuck",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Fresh Trout",
+    "Tea"
+  ],
+
+  "travelTips": [
+    "Pack warm clothing because temperatures can be significantly cooler in the mountains.",
+    "Wear comfortable hiking shoes for trails and waterfall visits.",
+    "Allow extra travel time on winding mountain roads.",
+    "Carry rain protection because mountain weather can change quickly.",
+    "Consider visiting several areas of the Eastern Highlands rather than rushing through the region."
+  ]
+}

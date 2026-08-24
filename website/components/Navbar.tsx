@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 
 const links = [
   { label: "Product", href: "/#why" },
-  { label: "Meet Zuri", href: "/#zuri" },
-  { label: "Zimbabwe", href: "/#launch" },
+  { label: "Meet Zuri", href: "/chat" },
+  { label: "Zimbabwe", href: "/#zimbabwe" },
   { label: "Roadmap", href: "/#roadmap" },
   { label: "Early Access", href: "/#waitlist" },
 ];
@@ -29,30 +29,50 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", closeOnResize);
+
+    return () => {
+      window.removeEventListener("resize", closeOnResize);
+    };
+  }, [menuOpen]);
+
   return (
     <nav
-      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "border-b border-black/5 bg-warmwhite/90 shadow-sm backdrop-blur-xl"
+      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
+        scrolled || menuOpen
+          ? "border-b border-black/5 bg-warmwhite/95 shadow-sm backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      {/* Main Navbar */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
 
         {/* Logo */}
         <Link
           href="/"
-          className={`flex items-center gap-3 transition-colors ${
-            scrolled ? "text-forest" : "text-white"
+          onClick={() => setMenuOpen(false)}
+          className={`flex min-w-0 items-center gap-2 text-lg font-semibold transition sm:text-xl ${
+            scrolled || menuOpen
+              ? "text-forest"
+              : "text-white"
           }`}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-forest to-sunrise text-sm font-bold text-white shadow-md">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-forest via-heritage to-sunrise text-sm font-bold text-white shadow-md">
             A
           </span>
 
-          <span className="font-serif text-xl font-semibold">
+          <span className="truncate font-serif">
             AfriSphere{" "}
-            <span className={scrolled ? "text-sunrise" : "text-heritage"}>
+            <span className="text-heritage">
               AI
             </span>
           </span>
@@ -61,14 +81,16 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <div
           className={`hidden items-center gap-7 text-sm font-medium lg:flex ${
-            scrolled ? "text-gray-700" : "text-white/80"
+            scrolled
+              ? "text-gray-700"
+              : "text-white/90"
           }`}
         >
           {links.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className={`transition-colors duration-300 ${
+              className={`transition ${
                 scrolled
                   ? "hover:text-forest"
                   : "hover:text-heritage"
@@ -81,12 +103,8 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <Link
-          href="/#zuri"
-          className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:scale-105 lg:block ${
-            scrolled
-              ? "bg-forest text-white hover:bg-sunrise"
-              : "bg-sunrise text-white hover:bg-orange-600"
-          }`}
+          href="/chat"
+          className="hidden rounded-full bg-sunrise px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-orange-600 lg:inline-flex"
         >
           Meet Zuri →
         </Link>
@@ -94,50 +112,69 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label="Toggle navigation menu"
+          onClick={() =>
+            setMenuOpen((open) => !open)
+          }
+          aria-label={
+            menuOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
           aria-expanded={menuOpen}
-          className={`text-2xl transition-colors lg:hidden ${
-            scrolled ? "text-forest" : "text-white"
-          }`}
+          aria-controls="mobile-navigation"
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl transition ${
+            scrolled || menuOpen
+              ? "text-forest hover:bg-black/5"
+              : "text-white hover:bg-white/10"
+          } lg:hidden`}
         >
           {menuOpen ? "✕" : "☰"}
         </button>
       </div>
 
       {/* Mobile Navigation */}
-      {menuOpen && (
-        <div className="border-t border-black/5 bg-warmwhite px-6 py-6 shadow-xl lg:hidden">
-          <div className="flex flex-col gap-5">
-            {links.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-sm font-medium text-gray-700 transition hover:text-forest"
-              >
-                {link.label}
-              </Link>
-            ))}
+      <div
+        id="mobile-navigation"
+        className={`overflow-hidden transition-all duration-300 ease-out lg:hidden ${
+          menuOpen
+            ? "max-h-[500px] opacity-100"
+            : "pointer-events-none max-h-0 opacity-0"
+        }`}
+      >
+        <div className="border-t border-black/5 bg-warmwhite/95 px-4 pb-6 pt-4 shadow-lg backdrop-blur-xl sm:px-6">
 
+          <div className="mx-auto max-w-7xl">
+
+            {/* Navigation Links */}
+            <div className="flex flex-col">
+
+              {links.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() =>
+                    setMenuOpen(false)
+                  }
+                  className="border-b border-black/5 py-4 text-base font-medium text-gray-700 transition hover:pl-1 hover:text-forest"
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+            </div>
+
+            {/* Mobile CTA */}
             <Link
-              href="/#zuri"
+              href="/chat"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 rounded-full bg-sunrise px-6 py-3 text-center text-sm font-semibold text-white transition hover:bg-orange-600"
+              className="mt-5 flex items-center justify-center rounded-full bg-sunrise px-6 py-3.5 font-semibold text-white shadow-sm transition hover:bg-orange-600"
             >
               Meet Zuri →
             </Link>
 
-            <Link
-              href="/#waitlist"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-full border border-forest/20 px-6 py-3 text-center text-sm font-semibold text-forest transition hover:bg-forest hover:text-white"
-            >
-              Join Early Access
-            </Link>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

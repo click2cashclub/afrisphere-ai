@@ -1,0 +1,65 @@
+{
+  "id": "matobo-hills",
+  "name": "Matobo Hills",
+  "country": "Zimbabwe",
+  "region": "Matabeleland South",
+  "type": "Cultural & Natural Landscape",
+
+  "heroImage": "/images/destinations/zimbabwe/matobo-hills/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/matobo-hills/hero.jpg"
+  ],
+
+  "summary": "A spectacular landscape of granite balancing rocks, ancient San rock art, wildlife, and cultural heritage near Bulawayo.",
+
+  "description": "Matobo Hills is renowned for its dramatic granite formations, ancient rock paintings, rich wildlife, and deep cultural significance. The area combines extraordinary scenery with opportunities for hiking, historical exploration, rhino tracking, and discovering the traditions of communities who have lived around the hills for generations.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "September"
+  },
+
+  "recommendedStay": "1–2 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -20.500,
+    "longitude": 28.500
+  },
+
+  "highlights": [
+    "Balancing Granite Rocks",
+    "San Rock Art",
+    "Rhino Tracking",
+    "World's View",
+    "Hiking Trails"
+  ],
+
+  "wildlife": [
+    "White Rhinos",
+    "Black Rhinos",
+    "Leopards",
+    "Zebras",
+    "Giraffes",
+    "Klipspringers",
+    "Eagles"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Muriwo",
+    "Bota",
+    "Mopane Worms"
+  ],
+
+  "travelTips": [
+    "Wear comfortable walking shoes for exploring the rocky terrain.",
+    "Carry plenty of drinking water when hiking.",
+    "Early morning is a good time for wildlife and rhino tracking.",
+    "Consider visiting with a local guide to better understand the area's history and rock art.",
+    "Bring sun protection, especially during outdoor activities."
+  ]
+}

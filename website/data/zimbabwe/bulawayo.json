@@ -1,0 +1,65 @@
+{
+  "id": "bulawayo",
+  "name": "Bulawayo",
+  "country": "Zimbabwe",
+  "region": "Bulawayo Metropolitan Province",
+  "type": "City & Cultural Destination",
+
+  "heroImage": "/images/destinations/zimbabwe/bulawayo/hero.jpg",
+
+  "gallery": [
+    "/images/destinations/zimbabwe/bulawayo/hero.jpg"
+  ],
+
+  "summary": "Zimbabwe's historic second-largest city, known for its wide streets, museums, railway heritage, arts, culture, and easy access to Matobo Hills.",
+
+  "description": "Bulawayo offers a relaxed introduction to Zimbabwean urban culture and history. Visitors can explore the Natural History Museum, Bulawayo Railway Museum, historic city centre, local markets, galleries, and traditional food experiences while using the city as a gateway to nearby attractions including Matobo Hills and Khami Ruins.",
+
+  "bestTime": {
+    "from": "May",
+    "to": "September"
+  },
+
+  "recommendedStay": "2–3 Days",
+
+  "rating": 5,
+
+  "coordinates": {
+    "latitude": -20.150,
+    "longitude": 28.583
+  },
+
+  "highlights": [
+    "Natural History Museum",
+    "Bulawayo Railway Museum",
+    "Bulawayo City Centre",
+    "Local Markets",
+    "Arts & Cultural Experiences",
+    "Khami Ruins"
+  ],
+
+  "wildlife": [
+    "Rhinos",
+    "Elephants",
+    "Zebras",
+    "Giraffes",
+    "Antelope",
+    "Birdlife"
+  ],
+
+  "localFoods": [
+    "Sadza",
+    "Nyama",
+    "Mopane Worms",
+    "Muriwo",
+    "Traditional Stews"
+  ],
+
+  "travelTips": [
+    "Explore the city centre on foot or with a local guide.",
+    "Allow time for the Natural History Museum and Railway Museum.",
+    "Try authentic Zimbabwean food at a local restaurant.",
+    "Use Bulawayo as a base for exploring Matobo Hills and nearby heritage sites.",
+    "Carry small USD notes for local purchases and transport."
+  ]
+}
