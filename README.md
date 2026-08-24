@@ -1,40 +1,48 @@
 # 🌍 AfriSphere AI
 
-> **Ancient Cultures. Modern Intelligence. One Africa.**
+> **Built in Zimbabwe. Designed for Africa.**
 
-AfriSphere AI is building **Africa's Tourism Intelligence Platform**—an AI-powered ecosystem that helps travelers discover authentic African experiences while empowering tourism businesses through intelligent technology.
-
----
-
-## 🚀 Vision
-
-Our mission is to make Africa the easiest and most rewarding continent to explore through trusted local knowledge, artificial intelligence, and community-driven tourism.
+AfriSphere AI is building **Africa's Travel Intelligence Platform**—helping travellers discover authentic destinations, personalized itineraries, trusted local experiences, and intelligent travel insights across the continent.
 
 ---
 
-## 🤖 Meet Zuri
+# 🚀 Vision
 
-**Zuri** is your local African friend, powered by AI.
+Our mission is to make Africa the easiest and most rewarding continent to explore by combining trusted local knowledge, intelligent technology, and authentic travel experiences.
 
-Zuri helps travelers:
+We believe every traveller should have access to an intelligent companion that understands Africa's destinations, cultures, wildlife, history, and communities.
+
+---
+
+# 🌍 Meet Zuri
+
+**Zuri** is AfriSphere AI's intelligent travel companion.
+
+Designed specifically for African travel, Zuri helps travellers:
 
 - 🗺️ Build personalized travel itineraries
 - 🏛️ Discover authentic cultural experiences
-- 🍽️ Find local food and hidden gems
-- 🦁 Explore Africa's wildlife and heritage
-- 💡 Travel with confidence using trusted local insights
+- 🍽️ Find exceptional local food and hidden gems
+- 🦁 Explore wildlife, nature, and heritage
+- 🚗 Plan practical routes and transport
+- 💰 Estimate travel budgets
+- 💡 Travel confidently with trusted local insights
 
 ---
 
-## 🇿🇼 Launch Market
+# 🌍 Launch Strategy
 
-Our first launch country is **Zimbabwe**, showcasing the richness of its people, culture, wildlife, and heritage before expanding across Africa.
+AfriSphere AI launches with **Zimbabwe**, building deep local travel intelligence before expanding across Africa.
+
+Our long-term vision is to create the continent's most trusted AI-powered travel platform.
 
 ---
 
-## 🛠️ Technology Stack
+# 🛠 Technology Stack
 
 - Next.js
+- React
+- TypeScript
 - Tailwind CSS
 - Google Gemini API
 - Supabase
@@ -44,22 +52,41 @@ Our first launch country is **Zimbabwe**, showcasing the richness of its people,
 
 ---
 
-## 🗺️ Roadmap
+# 🗺 Product Roadmap
 
-- ✅ Phase 1 — Zimbabwe
-- 🔄 Phase 2 — Southern Africa
-- ⏳ Phase 3 — East Africa
-- ⏳ Phase 4 — West Africa
-- 🌍 Phase 5 — All 54 African countries
-
----
-
-## 🌍 Our Vision
-
-We believe Africa deserves its own AI-powered tourism platform—one built with local knowledge, authentic stories, and technology that benefits travelers, communities, and tourism businesses alike.
+- ✅ **Foundation** — Zimbabwe tourism research, Zuri concept, brand system, product architecture, and initial knowledge base.
+- 🔄 **Zimbabwe MVP** *(Q3 2026 — building now)* — The first working Zuri experience: AI conversations, personalized itineraries, destination discovery, and Zimbabwe tourism intelligence.
+- 🚀 **Tourism Partner Network** *(next)* — Connect Zuri with local guides, tour operators, accommodation providers, restaurants, and authentic community experiences.
+- 🌍 **Southern Africa Expansion** — Botswana, Zambia, South Africa, Namibia, and Mozambique with country-specific local intelligence.
+- 🌍 **Pan-African Tourism Intelligence** *(long-term vision)* — A multilingual AI tourism platform helping travellers discover and plan authentic experiences across Africa.
 
 ---
 
-## 📄 License
+# ✨ Core Features
+
+- 🤖 Intelligent Travel Assistant (Zuri)
+- 📍 Destination Discovery
+- 🧳 Personalized Itineraries
+- 🏨 Hotel Recommendations
+- 🍽 Restaurant Recommendations
+- 🎭 Authentic Local Experiences
+- 💰 AI Budget Planning
+- 🗺 Interactive Trip Planning
+- 🌦 Destination Insights
+- 📸 Photography & Hidden Gems
+
+---
+
+# 🌍 Our Vision
+
+Africa deserves travel technology built for Africa.
+
+AfriSphere AI combines artificial intelligence with trusted local knowledge to help travellers discover authentic destinations while creating new opportunities for local communities, guides, tourism businesses, and hospitality partners.
+
+Our goal is to become Africa's trusted travel intelligence platform.
+
+---
+
+# 📄 License
 
 This project is released under the MIT License.
