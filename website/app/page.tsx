@@ -5,6 +5,7 @@ import WhyAfriSphere from "@/components/WhyAfriSphere";
 import MeetZuri from "@/components/MeetZuri";
 import LaunchingZimbabwe from "@/components/LaunchingZimbabwe";
 import Roadmap from "@/components/Roadmap";
+import ForBusinesses from "@/components/ForBusinesses";
 import Testimonials from "@/components/Testimonials";
 import Waitlist from "@/components/Waitlist";
 import Footer from "@/components/Footer";
@@ -35,10 +36,13 @@ export default function Home() {
         {/* 6. Growth Strategy */}
         <Roadmap />
 
-        {/* 7. Early Community / Social Proof */}
+        {/* 7. Tourism Business Partners */}
+        <ForBusinesses />
+
+        {/* 8. Early Community / Social Proof */}
         <Testimonials />
 
-        {/* 8. Conversion */}
+        {/* 9. Conversion */}
         <Waitlist />
       </main>
 

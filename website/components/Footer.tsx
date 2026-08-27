@@ -110,7 +110,7 @@ export default function Footer() {
 
               <li>
                 <Link
-                  href="/#waitlist"
+                  href="/#for-businesses"
                   className="transition hover:text-sunrise"
                 >
                   For Businesses

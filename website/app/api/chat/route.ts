@@ -270,17 +270,17 @@ Do not force the following sections into focused questions.
 
 Only use itinerary sections such as:
 
-🧭 Journey Overview
-📅 Day 1
-🚗 Transport
-💰 Budget Advice
-🎒 Packing Tips
+ðŸ§­ Journey Overview
+ðŸ“… Day 1
+ðŸš— Transport
+ðŸ’° Budget Advice
+ðŸŽ’ Packing Tips
 
 when the traveller actually asks for trip planning.
 
 For food questions, a suitable structure is:
 
-🍽 Local Food
+ðŸ½ Local Food
 
 Short explanation.
 
@@ -288,9 +288,9 @@ Restaurant recommendations.
 
 Traditional dishes or flavours worth looking for.
 
-⭐ Local Insight
+â­ Local Insight
 
-💬 Next Step
+ðŸ’¬ Next Step
 
 Do not repeat information unnecessarily.
 
@@ -796,17 +796,62 @@ ${lines.join("\n\n")}
 */
 
 function buildLocalFallback(
-  message: string
+  message: string,
+  history: HistoryMessage[] = []
 ): string {
-  const {
+  let {
     isFoodRequest,
     isHotelRequest,
+    isDestinationRequest,
     isExperienceRequest,
     isTripPlanningRequest,
   } = detectIntent(message);
 
   const destinations =
     getMentionedDestinations(message);
+
+  /*
+   * If the current message alone doesn't match any category, it may be
+   * a generic reply to one of Zuri's own follow-up suggestions (e.g.
+   * clicking "Would you like recommendations focused on wildlife,
+   * history and culture, or scenic relaxation?"). That kind of message
+   * has no topic keywords of its own - it only makes sense in the
+   * context of what was just being discussed. Rather than falling
+   * through to a generic catch-all, check the intent of the most
+   * recent conversation turns instead.
+   */
+  const noCategoryMatched =
+    !isFoodRequest &&
+    !isHotelRequest &&
+    !isDestinationRequest &&
+    !isExperienceRequest &&
+    !isTripPlanningRequest;
+
+  if (
+    noCategoryMatched &&
+    history.length > 0
+  ) {
+    const recentText = history
+      .slice(-2)
+      .map(
+        (entry) => entry.text
+      )
+      .join(" ");
+
+    const recentIntent =
+      detectIntent(recentText);
+
+    isFoodRequest =
+      recentIntent.isFoodRequest;
+    isHotelRequest =
+      recentIntent.isHotelRequest;
+    isDestinationRequest =
+      recentIntent.isDestinationRequest;
+    isExperienceRequest =
+      recentIntent.isExperienceRequest;
+    isTripPlanningRequest =
+      recentIntent.isTripPlanningRequest;
+  }
 
   if (isFoodRequest) {
     const restaurants =
@@ -851,6 +896,25 @@ If you are already in the destination, checking current local listings or asking
 I can help you compare accommodation options, but I don't want to invent current prices, availability or hotel details.
 
 Tell me your destination and whether you're looking for budget, comfortable or luxury accommodation, and I'll narrow the options down.
+    `.trim();
+  }
+
+  if (isDestinationRequest) {
+    const destination =
+      destinations[0]?.name;
+
+    if (destination) {
+      return `
+${destination} is one of the Zimbabwe destinations Zuri has detailed information on.
+
+Ask me about accommodation, food, activities, or how to build ${destination} into a wider Zimbabwe itinerary.
+      `.trim();
+    }
+
+    return `
+Zimbabwe has a wide range of destinations, from Victoria Falls and Hwange National Park to Great Zimbabwe, Matobo Hills, Lake Kariba and the Eastern Highlands.
+
+Tell me what kind of experience you're looking for - wildlife, history and culture, or scenic relaxation - and I can point you toward the right destinations.
     `.trim();
   }
 
@@ -1434,7 +1498,8 @@ export async function POST(
     if (!geminiAvailable) {
       reply =
         buildLocalFallback(
-          message
+          message,
+          history
         );
     }
 
