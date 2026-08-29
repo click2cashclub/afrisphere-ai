@@ -4,6 +4,7 @@ import {
   ComponentPropsWithoutRef,
   FormEvent,
   KeyboardEvent,
+  Suspense,
   useEffect,
   useRef,
   useState,
@@ -187,7 +188,7 @@ const markdownComponents = {
   ),
 };
 
-export default function ChatPage() {
+function ChatPageContent() {
   const [messages, setMessages] = useState<Message[]>([
     welcomeMessage,
   ]);
@@ -748,5 +749,13 @@ export default function ChatPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={null}>
+      <ChatPageContent />
+    </Suspense>
   );
 }
